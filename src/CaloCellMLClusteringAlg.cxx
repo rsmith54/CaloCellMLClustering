@@ -3,6 +3,16 @@
 
 //#include "xAODEventInfo/EventInfo.h"
 
+#include "CaloEvent/CaloCellContainer.h"
+#include "CaloEvent/CaloClusterCellLink.h"
+
+//#include "xAODCaloEvent/CaloClusterContainer.h"
+
+#include "GaudiKernel/MsgStream.h"
+//#include "xAODJet/JetContainer.h"
+//#include "xAODBase/IParticle.h"
+//#include "JetUtils/JetCellAccessor.h"
+
 //uncomment the line below to use the HistSvc for outputting trees and histograms
 //#include "GaudiKernel/ITHistSvc.h"
 //#include "TTree.h"
@@ -51,31 +61,22 @@ StatusCode CaloCellMLClusteringAlg::finalize() {
   return StatusCode::SUCCESS;
 }
 
-StatusCode CaloCellMLClusteringAlg::execute() {  
+StatusCode CaloCellMLClusteringAlg::execute() {
   ATH_MSG_DEBUG ("Executing " << name() << "...");
   setFilterPassed(false); //optional: start with algorithm not passed
 
+  const CaloCellContainer* cellContainer = nullptr;
+  CHECK( evtStore()->retrieve( cellContainer, "AllCalo") );
 
-
-  //
-  //Your main analysis code goes here
-  //If you will use this algorithm to perform event skimming, you
-  //should ensure the setFilterPassed method is called
-  //If never called, the algorithm is assumed to have 'passed' by default
-  //
-
-
-  //HERE IS AN EXAMPLE
-  //const xAOD::EventInfo* evtInfo = 0;
-  //CHECK( evtStore()->retrieve( evtInfo, "EventInfo" ) );
-  //ATH_MSG_INFO("eventNumber=" << evtInfo->eventNumber() );
-
+  for(auto cell : cellContainer) {
+    ATH_MSG_DEBUG("cell pt : " << cell->pt() );
+  }
 
   setFilterPassed(true); //if got here, assume that means algorithm passed
   return StatusCode::SUCCESS;
 }
 
-StatusCode CaloCellMLClusteringAlg::beginInputFile() { 
+StatusCode CaloCellMLClusteringAlg::beginInputFile() {
   //
   //This method is called at the start of each input file, even if
   //the input file contains no events. Accumulate metadata information here
